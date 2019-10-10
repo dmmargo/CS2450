@@ -10,9 +10,12 @@ import javafx.stage.Stage;
 
 public class InClass9 extends Application {
 
-    Stage window;
+    private Menu viewMenu;
+    private Menu helpMenu;
+    private BorderPane borderPane;
+    private ListView<String> bookListview;
+    private ListView<String> moveListview;
     BorderPane layout;
-
 
     //@Override
     public static void main(String[] args) {
@@ -20,43 +23,62 @@ public class InClass9 extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
-        window = primaryStage;
-        window.setTitle("InClass 9");
 
-        //File menu
-        Menu radioMenu = new Menu("View");
-        //MenuItem newFile = new MenuItem("New...");
-        //newFile.setOnAction(e -> System.out.println("Create a new file..."));
-        //fileMenu.getItems().add(newFile);
-        //fileMenu.getItems().add(new MenuItem("Open..."));
-        radioMenu.getItems().add(new MenuItem("Book"));
-        radioMenu.getItems().add(new SeparatorMenuItem());
-        radioMenu.getItems().add(new MenuItem("Movie"));
-        radioMenu.getItems().add(new SeparatorMenuItem());
-        radioMenu.getItems().add(new MenuItem("Exit"));
+        moveListview = new ListView<>();
+        moveListview.getItems().addAll( "Conjouring", "IT", "UP");
+        bookListview = new ListView<>();
+        bookListview.getItems().addAll( "Green Eggs and Ham", "Lord of the Flies", "Romeo and Juliet");
 
-        ListView<String> listView1 = new ListView<>();
-        listView1.setPrefSize(100,75);
-        listView1.getItems().addAll("book1", "book2", "book3");
-        VBox vBox = new VBox(listView1);
-        vBox.setPadding(new Insets(10));
-        vBox.setAlignment(Pos.CENTER);
-        bp.setCenter(vBox)
+        createViewMenu();
+        createHelpMenu();
 
-
-        //Help menu
-        Menu helpMenu = new Menu("Help");
-        helpMenu.getItems().add(new MenuItem("About"));
-
-
-        //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(radioMenu, helpMenu);
-
         layout = new BorderPane();
         layout.setTop(menuBar);
-        Scene scene = new Scene(layout, 400, 300);
-        window.setScene(scene);
-        window.show();
+
+
+        menuBar.getMenus().addAll( viewMenu, helpMenu);
+        borderPane = new BorderPane();
+        borderPane.setTop(menuBar);
+        borderPane.setCenter(bookListview);
+        primaryStage.setScene(new Scene(borderPane));
+        primaryStage.show();
+    }
+
+    private void createHelpMenu()
+    {
+        helpMenu = new Menu("Help");
+        MenuItem aboutItem = new MenuItem("About");
+
+        helpMenu.getItems().add(aboutItem);
+        aboutItem.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText("Diane, 2020");
+            alert.show();
+        });
+    }
+    private void createViewMenu()
+    {
+        viewMenu = new Menu("View");
+        RadioMenuItem bookItem = new RadioMenuItem( "Books");
+        RadioMenuItem movieItem = new RadioMenuItem( "Movies");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        bookItem.setToggleGroup(toggleGroup);
+
+        bookItem.setSelected( true);
+        movieItem.setToggleGroup(toggleGroup);
+        MenuItem exitItem = new MenuItem("Exit");
+        viewMenu.getItems().addAll(bookItem, new SeparatorMenuItem(), movieItem, new SeparatorMenuItem(), exitItem);
+
+        bookItem.setOnAction(event -> {
+            borderPane.setCenter(bookListview);
+        });
+        movieItem.setOnAction(event -> {
+            borderPane.setCenter(moveListview);
+        });
+        exitItem.setOnAction(event -> {
+            System.exit(0);
+        });
     }
 }
